@@ -1,0 +1,7 @@
+public class Node {
+    private int id;
+    public Node(int identifier){
+        id = identifier;
+    }
+
+}
