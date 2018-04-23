@@ -1,1 +1,229 @@
+package DijkstrasAlgorithm;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+/**
+ * This class creates a graph to run Dijkstra's algorithm.
+ * It also contains many methods that are necessary for the implementation of the algorithm.
+ *
+
+ */
+public class Dijkstra {
+    /**
+     * The source node that is inputed.
+     */
+    private Node source;
+    /**
+     * A list containing all the edges between the nodes of the graph.
+     */
+    private final List<Edge> edges;
+    /**
+     * A HashMap of nodes with integer values of distance between them.
+     */
+    private HashMap<Node, Integer> distance;
+
+    /**
+     * HashSet of nodes to keep track of which nodes have been visited.
+     */
+    HashSet<Node> visited = new HashSet<Node>();
+    /**
+     * HashSet of nodes to keep track of which nodes have not been visited.
+     */
+    HashSet<Node> unVisited = new HashSet<Node>();
+    /**
+     * ArrayList of nodes to store the previously visited nodes.
+     */
+    ArrayList<Node> previous = new ArrayList<Node>();
+
+
+    /**
+     * Constructor which takes the source node and the input graph.
+     * @param inputGraph graph to be made.
+     * @param inputNode the source node.
+     */
+    public Dijkstra(Graph inputGraph, Node inputNode) {
+        this.source = inputNode;
+        this.edges = new ArrayList<Edge>(inputGraph.getEdges());
+        this.distance = new HashMap<Node, Integer>();
+    }
+
+    /**
+     * Returns an ArrayList of integers containing the given inputs as elements.
+     * @param a integer to be added to list.
+     * @param b integer to be added to list.
+     * @return ArrayList<Integer> list containing both a and b.
+     */
+    public static ArrayList<Integer> CreateList(int a, int b) {
+        ArrayList<Integer> List = new ArrayList<Integer>();
+        List.add(a);
+        List.add(b);
+        return List;
+    }
+
+    /**
+     * Returns a boolean value if the given node has been visited.
+     * @param node node to be checked if visited.
+     * @return boolean true if the node has been visited. Otherwise, false.
+     */
+    public boolean HasVisited(Node node) {
+        for(Node visit : visited) {
+            if(visit.getIdentifier() == node.getIdentifier()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds the graph with shortest paths via ArrayList of edges and HashMap of nodes and integers.
+     */
+    public void run() {
+        HashMap<Node, Integer> distance = new HashMap<Node, Integer>();
+        distance.put(source, 0);
+        unVisited.add(source);
+
+        while (!unVisited.isEmpty()) {
+            Node node = getMinimum(unVisited);
+
+            ArrayList<Edge> neighbors = getNeighbors(node);
+            unVisited.remove(Node);
+            int shortestDistance = Integer.MAX_VALUE;
+            Node shortestNode = null;
+            for(Edge edge : neighbors) {
+                if(!HasVisited(edge.getDestination())) {
+                    int neighborDistance = edge.getDistance();
+                    if(shortestDistance > neighborDistance) {
+                        distance.put(edge.getDestination(), getShortestDistance(edge.getSource()) + edge.getDistance());
+                        shortestDistance = neighborDistance;
+                        shortestNode = edge.getDestination();
+                    }
+                }
+            }
+            visited.add(node);
+            previous.add(node);
+            if(shortestNode != null) {
+                unVisited.add(shortestNode);
+            }
+        }
+    }
+
+    /**
+     * Returns a node with the shortest distance.
+     * @param nodes HashSet of nodes to be compared for distance.
+     * @return Node that is the minimum distance.
+     */
+    private Node getMinimum(HashSet<Node> nodes) {
+        Node minimum = null;
+        for (Node node : nodes) {
+            if (minimum == null) {
+                minimum = node;
+            } else {
+                if (getShortestDistance(node) < getShortestDistance(minimum)) {
+                    minimum = node;
+                }
+            }
+        }
+        return minimum;
+    }
+
+    /**
+     * Returns an ArrayList of edges containing all neighboring nodes to the given node.
+     * @param node source node to be used to find neighbors.
+     * @return ArrayList edges containing neighbors of the given node.
+     */
+    private ArrayList<Edge> getNeighbors(Node node) {
+        ArrayList<Edge> neighbors = new ArrayList<Edge>();
+        for (Edge edge : edges) {
+            if (edge.getSource().getIdentifier() == node.getIdentifier()) {
+                neighbors.add(edge);
+            }
+        }
+        return neighbors;
+    }
+
+    /**
+     * Returns an int value of the shortest distance to the given node.
+     * @param node a node to find distance of.
+     * @return int the distance to the node. If not defined, return the max integer value.
+     */
+    private int getShortestDistance(Node node) {
+        Integer d = distance.get(node);
+        if (d == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return d;
+        }
+    }
+    /**
+     * Returns an ArrayList of nodes with all previously visited nodes.
+     * @return ArrayList<Node> list containing all visited nodes.
+     */
+    public ArrayList<Node> getPreviousList() {
+        return previous;
+    }
+
+    /**
+     * Creates vertex to be added to ArrayList.
+     * Create an ArrayList of ArrayList of ArrayList of integers to follow the input requirements.
+     * Creates a graph based on the nested ArrayLists.
+     * Prints the shortest path nodes from a source node in the graph.
+     * @param args
+     */
+    public static void main(String[] args) {
+        // Build the input to the graph.
+        ArrayList<ArrayList<ArrayList<Integer>>> r =  new ArrayList<ArrayList<ArrayList<Integer>>>();
+        ArrayList<ArrayList<Integer>> vertexa = new ArrayList<ArrayList<Integer>>();
+        vertexa.add(CreateList(2, 7));
+        vertexa.add(CreateList(3, 9));
+        vertexa.add(CreateList(6, 14));
+
+        ArrayList<ArrayList<Integer>> vertexb = new ArrayList<ArrayList<Integer>>();
+        vertexb.add(CreateList(1, 7));
+        vertexb.add(CreateList(3, 10));
+        vertexb.add(CreateList(4, 15));
+
+        ArrayList<ArrayList<Integer>> vertexc = new ArrayList<ArrayList<Integer>>();
+        vertexc.add(CreateList(1, 9));
+        vertexc.add(CreateList(2, 10));
+        vertexc.add(CreateList(4, 11));
+        vertexc.add(CreateList(6, 2));
+
+        ArrayList<ArrayList<Integer>> vertexd = new ArrayList<ArrayList<Integer>>();
+        vertexd.add(CreateList(2, 15));
+        vertexd.add(CreateList(3, 11));
+        vertexd.add(CreateList(5, 6));
+
+        ArrayList<ArrayList<Integer>> vertexe = new ArrayList<ArrayList<Integer>>();
+        vertexe.add(CreateList(4, 6));
+        vertexe.add(CreateList(6, 9));
+
+        ArrayList<ArrayList<Integer>> vertexf = new ArrayList<ArrayList<Integer>>();
+        vertexf.add(CreateList(1, 14));
+        vertexf.add(CreateList(3, 2));
+        vertexf.add(CreateList(5, 9));
+
+        r.add(vertex1);
+        r.add(vertex2);
+        r.add(vertex3);
+        r.add(vertex4);
+        r.add(vertex5);
+        r.add(vertex6);
+
+        Graph g = new Graph(r);
+        Node n = new Node(1);
+
+        // Start the Dijkstra algorithm.
+        Dijkstra d = new Dijkstra(g, n);
+        d.run();
+
+        // Get the shorted paths.
+        ArrayList<Node> shortestPath = d.getPreviousList();
+        System.out.println("Shortest Path is : ");
+
+        }
+    }
+}
 
